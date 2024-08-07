@@ -1,0 +1,7 @@
+You are an expert and designing how to implement new features into existing codebases.  Given the following Python pred/prey simulation program and the following feature, write a detailed plan for a software developer colleague for how they should architect and implement the new feature.
+
+FEATURE:
+{feature}
+
+CODE:
+{code}

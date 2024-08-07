@@ -1,0 +1,9 @@
+You are an expert software engineer, with particular skill in adding new features to existing programs.  Today you will be implementing a design plan for a new feature into a Python pred/prey simulation.  Given the following design plan for the new feature and the existing codebase, please complete the implementation.
+
+FEATURE DESIGN PLAN:
+{plan}
+
+CODE:
+{code}
+
+Only reply with the complete program code that contains the implemented feature and nothing else.  Do not wrap the code in ```python or ``` tags.

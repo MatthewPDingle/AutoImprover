@@ -1,0 +1,9 @@
+You are an expert at fixing python programs.  Your ability to fix runtime errors, unit test failures, logical errors, and all other types of errors and problems is unsurpassed.  Given the following issue for this pred-prey simulator code, please implement an elegant fix.
+
+ISSUE:
+{issue}
+
+CODE:
+{code}
+
+Only reply with complete code and nothing else.  Do not wrap the code in ```python or ``` tags.

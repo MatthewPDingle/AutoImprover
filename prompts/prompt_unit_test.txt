@@ -1,0 +1,9 @@
+You are an expert at writing unit tests.  Create a well documented and thorough suite of unit tests for the following python program, focusing on aspects that are most likely to cause runtime errors.  Do not write any tests that require user input in any kind.  Do not write any tests that load the simulation.
+
+CODE:
+{code}
+
+FILE NAME:
+{filename}
+
+Only reply with complete code and nothing else.  Do not wrap the code in ```python or ``` tags.

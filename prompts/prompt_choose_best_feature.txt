@@ -1,0 +1,9 @@
+Given the following feature suggestions for this Python predator-prey simulator, select at your discretion which feature that will add the most value to the program.  
+
+FEATURES:
+{features}
+
+CODE:
+{code}
+
+Respond only with the brief summary of your chosen feature.
