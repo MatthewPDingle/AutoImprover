@@ -6,8 +6,13 @@ Important Guidelines:
 2. Analyze the structure of the provided code and create appropriate test cases.
 3. Ensure all tests can run without user interaction.
 4. If the program has a GUI component, make sure tests can run in a headless mode.
+5. For Pygame applications:
+	a. Mock Pygame surfaces and other Pygame objects using unittest.mock.MagicMock().
+	b. Use unittest.mock.patch to replace Pygame function calls with mocks.
+	c. When testing the main function in headless mode, ensure Pygame is properly initialized and all necessary objects are mocked.
 5. Do not modify any existing code; only write tests.
 6. Use appropriate mocking or stubbing techniques when necessary.
+7. Handle potential exceptions that might occur during Pygame initialization or when loading assets.
 
 CODE:
 {code}

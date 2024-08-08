@@ -6,4 +6,4 @@ FEATURES:
 CODE:
 {code}
 
-Respond only with the brief summary of your chosen feature.
+Respond only with the brief summary of your chosen feature.  Do not add any additional commentary.  Do not start by saying "I recommend..."

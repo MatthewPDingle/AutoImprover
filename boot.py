@@ -189,10 +189,18 @@ def analyze_code_for_errors(code):
     formatted_prompt = prompt.format(code=code)
     return call_openai_api("gpt-4o-mini", formatted_prompt, "analyze_errors")
 
+def read_feature_history():
+    feature_history_log = os.path.join(logs_dir, 'feature_history.log')
+    if os.path.exists(feature_history_log):
+        with open(feature_history_log, 'r') as f:
+            return f.read().strip()
+    return ""
+
 def suggest_new_features(code):
     """Use GPT to suggest new features."""
+    features = read_feature_history()
     prompt, _ = load_prompt('prompt_suggest_features.txt')
-    formatted_prompt = prompt.format(code=code)
+    formatted_prompt = prompt.format(features=features, code=code)
     return call_openai_api("gpt-4o-mini", formatted_prompt, "suggest_features")
 
 def choose_best_feature(features, code):
@@ -231,9 +239,23 @@ def fix_unit_tests(error, test_code, main_code):
     formatted_prompt = prompt.format(code=main_code, test_code=test_code, error=error)
     return call_openai_api("gpt-4o-mini", formatted_prompt, "fix_unit_tests")
 
+def log_version_history(version, is_fix, summary):
+    with open(version_history_log, 'a') as f:
+        f.write(f"Version {version}: {'Fix' if is_fix else 'New feature'} - {summary}\n")
+
+def log_feature_history(version, summary):
+    feature_history_log = os.path.join(logs_dir, 'feature_history.log')
+    with open(feature_history_log, 'a') as f:
+        f.write(f"Version {version}: {summary}\n")
+
 def determine_next_step(version, code, main_feature):
     """Determine the next step in the development process."""
-    log_version_history(f"Version {version} completed successfully. Main feature: {main_feature}")
+    is_fix = main_feature.startswith("Fix errors")
+    summary = main_feature[12:] if is_fix else main_feature[13:]  # Remove "Fix errors: " or "New feature: "
+    log_version_history(version, is_fix, summary)
+    
+    if not is_fix:
+        log_feature_history(version, summary)
     
     if random.choice([True, False]):
         return "analyze"

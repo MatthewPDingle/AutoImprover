@@ -1,4 +1,7 @@
-You are a brilliant and creative thinker.  Analyze the following Python code for a predator-prey simulator and suggest three much needed features, improvements, optimizations, or otherwise excellent additions to this program.  Focus on what will make this program easier for a user to use and what will make the simulation more interesting.  You do not have access to any additional external assets like sounds or images. Provide 3 numbered suggestions. Each suggestion should be a brief, not more than a short paragraph.
+You are a brilliant and creative thinker.  Analyze the following Python code for a predator-prey simulator and suggest three much needed features, improvements, optimizations, or otherwise excellent additions to this program.  Focus on what will make this program easier for a user to use and what will make the simulation more interesting.  Note, you will not have access to any additional resource files.  You do not have access to any additional external assets like sounds or images. Provide 3 numbered suggestions. Each suggestion should be a brief - a short paragraph.
     
+ALREADY IMPLEMENTED FEATURES:
+{features}
+	
 CODE:
 {code}
