@@ -121,21 +121,36 @@ def run_simulation(filename):
         return str(e)
 
 def get_test_methods(filename):
-    with open(filename, 'r') as file:
-        tree = ast.parse(file.read())
-    
-    test_methods = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'):
-            test_methods.append(node.name)
-    
-    return test_methods
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+        tree = ast.parse(content)
+        
+        test_methods = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name.startswith('test_'):
+                test_methods.append(node.name)
+        
+        return test_methods
+    except IndentationError as e:
+        logging.error(f"Indentation error in {filename} at line {e.lineno}")
+        return []
+    except SyntaxError as e:
+        logging.error(f"Syntax error in {filename} at line {e.lineno}: {e.text}")
+        return []
+    except Exception as e:
+        logging.error(f"Error parsing {filename}: {str(e)}")
+        return []
 
 def get_test_class_name(filename):
-    with open(filename, 'r') as file:
-        content = file.read()
-    match = re.search(r'class\s+(\w+)\(.*TestCase.*\):', content)
-    return match.group(1) if match else None
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+        match = re.search(r'class\s+(\w+)\(.*TestCase.*\):', content)
+        return match.group(1) if match else None
+    except Exception as e:
+        logging.error(f"Error getting test class name from {filename}: {str(e)}")
+        return None
 
 def run_unit_tests(filename, timeout=10):
     """Run unit tests individually with a timeout and capture any failures."""
@@ -143,6 +158,9 @@ def run_unit_tests(filename, timeout=10):
     test_class_name = get_test_class_name(filename) or 'UnitTester'
     failures = []
     removed_tests = []
+
+    if not test_methods:
+        return f"Unable to parse test methods from {filename}. Please check the file for syntax errors."
 
     for test_method in test_methods:
         try:
