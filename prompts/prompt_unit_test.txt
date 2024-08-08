@@ -1,4 +1,13 @@
-You are an expert at writing unit tests.  Create a well documented and thorough suite of unit tests for the following python program, focusing on aspects that are most likely to cause runtime errors.  Do not write any tests that require user input in any kind.  Do not write any tests that load the simulation.
+You are an expert at writing unit tests.  Create a well documented and thorough suite of unit tests for the following python program, focusing on aspects that are most likely to cause runtime errors.  Ensure that all tests are designed to run without user input and in a headless mode if applicable.
+
+Important Guidelines: 
+
+1. Name the test class UnitTester.
+2. Analyze the structure of the provided code and create appropriate test cases.
+3. Ensure all tests can run without user interaction.
+4. If the program has a GUI component, make sure tests can run in a headless mode.
+5. Do not modify any existing code; only write tests.
+6. Use appropriate mocking or stubbing techniques when necessary.
 
 CODE:
 {code}

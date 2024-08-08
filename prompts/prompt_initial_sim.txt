@@ -35,6 +35,11 @@ You are an expert software developer. Create a comprehensive and well-documented
 6. **Code Structure**:
     - Include all code in a single file.
     - Ensure the code is well-commented for clarity.
+	
+7. **Headless Mode**:
+	- The sim must be capable of running in headless mode without a GUI for unit testing purposes.
+	- Include a command line argument "--headless" to run in this mode.
+	- Running in headless mode should automatically exit the program after 5 seconds.
 
 ### Example Structure
 - **Initialization**: Setting up the Pygame environment, window, and initial configurations.

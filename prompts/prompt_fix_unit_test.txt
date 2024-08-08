@@ -1,9 +1,20 @@
-You are an expert at writing unit tests.  Please fix the following errors that occured in this python unit test code.
+You are an expert at fixing unit tests. Given the following Python program, its current unit tests, and the error message, please fix the unit tests to resolve the error. Ensure that your fixes maintain the integrity of the tests and are compatible with the structure of the main program.
 
-ERROR MESSAGE:
-{error}
+Important guidelines:
+
+1. Do not modify the main program code; only fix the unit tests.
+2. Ensure all tests can run without user interaction.
+3. If the program has a GUI component, make sure tests can run in a headless mode.
+4. Use appropriate mocking or stubbing techniques when necessary.
 
 CODE:
 {code}
 
-Only reply with code and nothing else.  Do not wrap the code in ```python or ``` tags.
+CURRENT UNIT TEST CODE:
+{test_code}
+
+ERROR MESSAGE:
+{error}
+
+
+Only reply with the complete, fixed unit test code and nothing else. Do not wrap the code in  ```python or ``` tags.

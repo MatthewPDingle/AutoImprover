@@ -110,7 +110,7 @@ def save_code_to_file(code, filename):
 def run_simulation(filename):
     """Run the simulation and capture any runtime errors."""
     try:
-        result = subprocess.run([sys.executable, filename], 
+        result = subprocess.run([sys.executable, filename, "--headless"], 
                                 capture_output=True, text=True, timeout=5)
         if result.returncode != 0:
             return result.stderr
@@ -131,16 +131,23 @@ def get_test_methods(filename):
     
     return test_methods
 
+def get_test_class_name(filename):
+    with open(filename, 'r') as file:
+        content = file.read()
+    match = re.search(r'class\s+(\w+)\(.*TestCase.*\):', content)
+    return match.group(1) if match else None
+
 def run_unit_tests(filename, timeout=10):
     """Run unit tests individually with a timeout and capture any failures."""
     test_methods = get_test_methods(filename)
+    test_class_name = get_test_class_name(filename) or 'UnitTester'
     failures = []
     removed_tests = []
 
     for test_method in test_methods:
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "unittest", f"{filename.replace('.py', '')}.TestPredatorPreySimulator.{test_method}"],
+                [sys.executable, "-m", "unittest", f"{filename.replace('.py', '')}.{test_class_name}.{test_method}"],
                 capture_output=True, text=True, timeout=timeout
             )
             if result.returncode != 0:
@@ -194,10 +201,16 @@ def fix_simulation(error, code):
     formatted_prompt = prompt.format(issue=error, code=code)
     return call_openai_api("gpt-4o-mini", formatted_prompt, "fix_simulation")
 
-def fix_unit_tests(error, code):
+def create_unit_tests(code, filename):
+    """Use GPT-4o to create initial unit tests."""
+    prompt, _ = load_prompt('prompt_unit_test.txt')
+    formatted_prompt = prompt.format(code=code, filename=filename)
+    return call_openai_api("gpt-4o", formatted_prompt, "create_unit_tests")
+
+def fix_unit_tests(error, test_code, main_code):
     """Use GPT to fix unit test errors."""
     prompt, _ = load_prompt('prompt_fix_unit_test.txt')
-    formatted_prompt = prompt.format(error=error, code=code)
+    formatted_prompt = prompt.format(code=main_code, test_code=test_code, error=error)
     return call_openai_api("gpt-4o-mini", formatted_prompt, "fix_unit_tests")
 
 def determine_next_step(version, code, main_feature):
@@ -277,9 +290,7 @@ def main():
             continue  # Go to determine_next_step with the previous version
 
         # Create and run unit tests
-        test_prompt, format_params = load_prompt('prompt_unit_test.txt')
-        format_dict = {'code': code, 'filename': sim_filename}
-        test_code = call_openai_api("gpt-4o-mini", test_prompt.format(**format_dict), "create_unit_tests")
+        test_code = create_unit_tests(code, sim_filename)
         test_filename = f"sim{version:04d}_test.py"
 
         if not save_code_to_file(test_code, test_filename):
@@ -287,38 +298,39 @@ def main():
             return
 
         # Run unit tests and fix if necessary
-        # test_fix_attempts = 0
-        # max_test_fix_attempts = 10 if version == 1 else 3
-        # while True:
-        #     test_failures = run_unit_tests(test_filename, timeout=10)
-        #     if not test_failures:
-        #         logging.info(f"Unit tests for version {version} passed successfully.")
-        #         break
+        test_fix_attempts = 0
+        max_test_fix_attempts = 10 if version == 1 else 3
+        while True:
+            test_failures = run_unit_tests(test_filename, timeout=10)
+            if not test_failures:
+                logging.info(f"Unit tests for version {version} passed successfully.")
+                break
             
-        #     logging.warning(f"Unit test failures in version {version}:\n{test_failures}")
-        #     test_fix_attempts += 1
-        #     if test_fix_attempts >= max_test_fix_attempts:
-        #         if version == 1:
-        #             logging.error(f"Initial version failed unit tests after {max_test_fix_attempts} fix attempts. Exiting.")
-        #             return
-        #         else:
-        #             logging.warning(f"Version {version} failed unit tests after {max_test_fix_attempts} fix attempts. Rolling back.")
-        #             version -= 1
-        #             with open(f"sim{version:04d}.py", 'r') as f:
-        #                 code = f.read()
-        #             break
+            logging.warning(f"Unit test failures in version {version}:\n{test_failures}")
+            test_fix_attempts += 1
+            if test_fix_attempts >= max_test_fix_attempts:
+                if version == 1:
+                    logging.error(f"Initial version failed unit tests after {max_test_fix_attempts} fix attempts. Exiting.")
+                    return
+                else:
+                    logging.warning(f"Version {version} failed unit tests after {max_test_fix_attempts} fix attempts. Rolling back.")
+                    version -= 1
+                    with open(f"sim{version:04d}.py", 'r') as f:
+                        code = f.read()
+                    break
             
-        #     if "Removed tests due to timeout" in test_failures:
-        #         continue  # Skip fixing attempt if tests were removed due to timeout
+            if "Removed tests due to timeout" in test_failures:
+                continue  # Skip fixing attempt if tests were removed due to timeout
             
-        #     test_code = fix_unit_tests(test_failures, test_code)
-        #     test_code = adjust_unit_test_imports(test_code, version)
-        #     if not save_code_to_file(test_code, test_filename):
-        #         logging.error(f"Failed to save fixed unit tests for version {version}. Exiting.")
-        #         return
+            with open(sim_filename, 'r') as f:
+                main_code = f.read()
+            test_code = fix_unit_tests(test_failures, test_code, main_code)
+            if not save_code_to_file(test_code, test_filename):
+                logging.error(f"Failed to save fixed unit tests for version {version}. Exiting.")
+                return
 
-        # if test_fix_attempts >= max_test_fix_attempts and version > 1:
-        #     continue  # Go to determine_next_step with the previous version
+        if test_fix_attempts >= max_test_fix_attempts and version > 1:
+            continue  # Go to determine_next_step with the previous version
 
         # Determine next step
         next_step = determine_next_step(version, code, main_feature)
