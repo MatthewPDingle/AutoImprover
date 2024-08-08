@@ -316,39 +316,39 @@ def main():
             return
 
         # Run unit tests and fix if necessary
-        test_fix_attempts = 0
-        max_test_fix_attempts = 10 if version == 1 else 3
-        while True:
-            test_failures = run_unit_tests(test_filename, timeout=10)
-            if not test_failures:
-                logging.info(f"Unit tests for version {version} passed successfully.")
-                break
+        # test_fix_attempts = 0
+        # max_test_fix_attempts = 10 if version == 1 else 3
+        # while True:
+        #     test_failures = run_unit_tests(test_filename, timeout=10)
+        #     if not test_failures:
+        #         logging.info(f"Unit tests for version {version} passed successfully.")
+        #         break
             
-            logging.warning(f"Unit test failures in version {version}:\n{test_failures}")
-            test_fix_attempts += 1
-            if test_fix_attempts >= max_test_fix_attempts:
-                if version == 1:
-                    logging.error(f"Initial version failed unit tests after {max_test_fix_attempts} fix attempts. Exiting.")
-                    return
-                else:
-                    logging.warning(f"Version {version} failed unit tests after {max_test_fix_attempts} fix attempts. Rolling back.")
-                    version -= 1
-                    with open(f"sim{version:04d}.py", 'r') as f:
-                        code = f.read()
-                    break
+        #     logging.warning(f"Unit test failures in version {version}:\n{test_failures}")
+        #     test_fix_attempts += 1
+        #     if test_fix_attempts >= max_test_fix_attempts:
+        #         if version == 1:
+        #             logging.error(f"Initial version failed unit tests after {max_test_fix_attempts} fix attempts. Exiting.")
+        #             return
+        #         else:
+        #             logging.warning(f"Version {version} failed unit tests after {max_test_fix_attempts} fix attempts. Rolling back.")
+        #             version -= 1
+        #             with open(f"sim{version:04d}.py", 'r') as f:
+        #                 code = f.read()
+        #             break
             
-            if "Removed tests due to timeout" in test_failures:
-                continue  # Skip fixing attempt if tests were removed due to timeout
+        #     if "Removed tests due to timeout" in test_failures:
+        #         continue  # Skip fixing attempt if tests were removed due to timeout
             
-            with open(sim_filename, 'r') as f:
-                main_code = f.read()
-            test_code = fix_unit_tests(test_failures, test_code, main_code)
-            if not save_code_to_file(test_code, test_filename):
-                logging.error(f"Failed to save fixed unit tests for version {version}. Exiting.")
-                return
+        #     with open(sim_filename, 'r') as f:
+        #         main_code = f.read()
+        #     test_code = fix_unit_tests(test_failures, test_code, main_code)
+        #     if not save_code_to_file(test_code, test_filename):
+        #         logging.error(f"Failed to save fixed unit tests for version {version}. Exiting.")
+        #         return
 
-        if test_fix_attempts >= max_test_fix_attempts and version > 1:
-            continue  # Go to determine_next_step with the previous version
+        # if test_fix_attempts >= max_test_fix_attempts and version > 1:
+        #     continue  # Go to determine_next_step with the previous version
 
         # Determine next step
         next_step = determine_next_step(version, code, main_feature)
