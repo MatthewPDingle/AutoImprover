@@ -15,10 +15,10 @@ You are an expert software developer. Create a comprehensive and well-documented
     - Use arrow keys or the left mouse button to click and drag to pan around the world.
 
 4. **Assets**:
-	- Root game directory is "T:\Dev\PredPrey_GP4omini"
+	- Root game directory is "T:\Dev\AutoImprover"
     - Image assets are located in the following directories:
-        - Prey: "T:\Dev\PredPrey_GP4omini\assets\prey"
-        - Predators: "T:\Dev\PredPrey_GP4omini\assets\pred"
+        - Prey: "T:\Dev\AutoImprover\assets\prey"
+        - Predators: "T:\Dev\AutoImprover\assets\pred"
     - Each asset is a 256x256 pixel image, you will probably want to downscale them considerably.
     - File naming convention for assets:
         - Predators: pred0001.png, pred0002.png, ..., pred0050.png
